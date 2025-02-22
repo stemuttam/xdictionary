@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 
 function App() {
@@ -10,21 +10,37 @@ function App() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [definition, setDefinition] = useState("");
+  const [searched, setSearched] = useState(false); // Track if a search was made
+
+  useEffect(() => {
+    if (searched && !searchTerm.trim()) {
+      setDefinition("Word not found in the dictionary.");
+    }
+  }, [searched, searchTerm]);
 
   const handleSearch = () => {
+    if (!searchTerm.trim()) {
+      setDefinition("Word not found in the dictionary.");
+      setSearched(true);
+      return;
+    }
+
     const foundWord = dictionary.find(
       (entry) => entry.word.toLowerCase() === searchTerm.toLowerCase()
     );
+    
     if (foundWord) {
       setDefinition(foundWord.meaning);
     } else {
       setDefinition("Word not found in the dictionary.");
     }
+
+    setSearched(true);
   };
 
   return (
     <div className="xdictionary-container">
-      <h1>XDictionary</h1>
+      <h1>Dictionary App</h1>  {/* Updated to match test expectations */}
       <input
         type="text"
         placeholder="Enter a word..."
@@ -33,7 +49,7 @@ function App() {
       />
       <button onClick={handleSearch}>Search</button>
 
-      {definition && (
+      {searched && (
         <div className="definition-box">
           {definition === "Word not found in the dictionary." ? (
             <p>{definition}</p>
